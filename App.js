@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import HomeScreen from './screens/Home';
-import MapScreen from './screens/Map';
+import ListScreen from './screens/List';
 
 export default function App() {
   const tabNav = createBottomTabNavigator()
@@ -18,10 +18,10 @@ export default function App() {
               <MaterialCommunityIcons name="home" color={color} size={size} />
             )
           }}/>
-          <tabNav.Screen name="Map" component={MapScreen} options={{
-            tabBarLabel: 'Map',
+          <tabNav.Screen name="List" component={ListScreen} options={{
+            tabBarLabel: 'Saved Data',
             tabBarIcon: ({color, size}) => ( 
-              <MaterialCommunityIcons name="map-marker" color={color} size={size} />
+              <MaterialCommunityIcons name="map" color={color} size={size} />
             )
           }}/>         
         </tabNav.Navigator>

@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, Button } from 'react-native';
 import { AppLoading } from 'expo';
 import * as Location from 'expo-location';
+import firebase from '../db/firebase';
+
 import {
   useFonts,
   Ubuntu_300Light,
@@ -100,7 +102,7 @@ export default function App() {
       setWeather({
         description: json.current.weather_descriptions[0],
         temperature: json.current.temperature,
-        precipitation: json.current.precip*100,
+        precipitation: json.current.precip,
         humidity: json.current.humidity,
         wind: json.current.wind_speed,
         icon: json.current.weather_icons[0]
@@ -134,6 +136,18 @@ export default function App() {
 
   function flipCurrency(){
     getCurrency(currencyExchange.target,currencyExchange.base,amountExchange);
+  }
+
+  function saveData(){
+    const db = firebase.database().ref("TravelPalDB");
+    const data = {
+      date: date.toUTCString(),      
+      location,
+      weather,
+      currencyExchange,
+    };
+    db.push(data);
+    console.group("data saved");
   }
 
   useEffect(() => {
@@ -187,9 +201,10 @@ export default function App() {
           </View>
           <View style={styles.button}>       
             <Button title="Convert" onPress={getNewExchange}/>             
-          </View>         
-            
-          
+          </View>        
+        </View>
+        <View style={styles.saveButton}>       
+            <Button title="Save Data" onPress={saveData} color='#555'/>             
         </View>
       </View>
     );
@@ -275,4 +290,8 @@ const styles = StyleSheet.create({
   button:{
     width: 260,
   },
+  saveButton:{
+    margin: 10,
+    width: 300,    
+  }
 });
