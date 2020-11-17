@@ -1,12 +1,16 @@
 import React from 'react'
+//importing libraries for the navigation
 import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+//importing icons library
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
+//importing screens
 import HomeScreen from './screens/Home';
 import ListScreen from './screens/List';
 
 export default function App() {
+  //creating tab navigator with 2 screens
   const tabNav = createBottomTabNavigator()
   return(
     <>
