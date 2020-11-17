@@ -139,6 +139,11 @@ export default function App() {
  
   //currency exchange api
   function getCurrency(base,target,amount) {    
+    //checks if coins are equal
+    let equalCoins = false;
+    if(base==target){
+      equalCoins = true;
+    }
     //sets the url of the api
     let fixerUrl = "http://data.fixer.io/api/latest?access_key=fc40583653e4d01a0acec2fcc7f9b77a&symbols=" + base + "," + target;
     //retrieves the data
@@ -149,7 +154,10 @@ export default function App() {
         .then((json) => { 
           //gets the rates of both coins because api is based on euros
           let rateBase = Object.values(json.rates)[0];
-          let rateTarget = Object.values(json.rates)[1];          
+          let rateTarget = rateBase;
+          if(!equalCoins){
+            rateTarget = Object.values(json.rates)[1];
+          }
           setCurrencyExchange({
             base: base,
             target: target,

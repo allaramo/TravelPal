@@ -158,6 +158,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 18,
         margin: 5,
+        textAlign: 'center',
       },
       subtitle: {
         fontFamily: 'Ubuntu_400Regular',
