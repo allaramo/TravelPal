@@ -86,7 +86,9 @@ export default function App() {
     .then((json) => { 
       //gets the city name (tries city district, town or district)         
       let city = "";
-      if ("city_district" in json.results[0].components) {            
+      if ("city" in json.results[0].components){
+        city = json.results[0].components.city;
+      } else if ("city_district" in json.results[0].components) {            
         city = json.results[0].components.city_district;
         city = city.split(" ")[0];
       } else if ("town" in json.results[0].components) {
@@ -101,7 +103,7 @@ export default function App() {
         country: json.results[0].components.country,
         city: city,
         currency: json.results[0].annotations.currency.iso_code
-      });
+      });      
       //calls weather api
       getWeather(location.coords.latitude,location.coords.longitude); 
       //if the function was set to true will update the currency and call the api for exchange 1 unit of local currency to 1 usd
@@ -115,7 +117,7 @@ export default function App() {
   //api to retrieve weather
   function getWeather(latitude,longitude) {
     //sets the url of the api
-    let weatherStackUrl = "http://api.weatherstack.com/current?access_key=59f7e5aea92d9b246584e72d35e0f13c&query=" +
+    let weatherStackUrl = "http://api.weatherstack.com/current?access_key=3bb8e0755627b88f8a4ebac7f1b8c44d&query=" +
     latitude + "," + longitude + "&units=m";
     //retrieves the data
     fetch(weatherStackUrl)
@@ -138,21 +140,22 @@ export default function App() {
   //currency exchange api
   function getCurrency(base,target,amount) {    
     //sets the url of the api
-    let frankFurterUrl = "http://api.frankfurter.app/latest?amount="+amount+"&from="+base+"&to="+target;
+    let fixerUrl = "http://data.fixer.io/api/latest?access_key=fc40583653e4d01a0acec2fcc7f9b77a&symbols=" + base + "," + target;
     //retrieves the data
-    fetch(frankFurterUrl)
+    fetch(fixerUrl)
         .then((response) => {
           return response.json();
         })
         .then((json) => { 
-          //gets the rate of the first key (the name of the key could be different, for that reason it is used Object.keys)
-          let value = json.rates[Object.keys(json.rates)[0]];
+          //gets the rates of both coins because api is based on euros
+          let rateBase = Object.values(json.rates)[0];
+          let rateTarget = Object.values(json.rates)[1];          
           setCurrencyExchange({
             base: base,
             target: target,
-            baseValue: amount,
-            targetValue: (Math.round(value * 100) / 100).toFixed(2), //the money exchanged with 2 decimals
-            rate: (Math.round((amount/value) * 100) / 100).toFixed(2), //the rate applied aprox. to 2 decimals
+            baseValue: parseFloat(parseFloat(amount).toFixed(2)), //parses the amount into float            
+            targetValue: parseFloat((parseFloat(amount)/rateBase*rateTarget).toFixed(2)), //converts the coin using both rates
+            rate: parseFloat((rateTarget / rateBase).toFixed(2)), //calculates the rate of the final coin
             date: json.date
           })
          
@@ -247,7 +250,8 @@ export default function App() {
       <ImageBackground style={styles.image} source={{uri:image}}>     
         <View style={styles.container}> 
           <View style={styles.weather}>
-            <Text style={styles.title}>{location.city}, {location.country}</Text>
+            <Text style={styles.title}>{location.city}</Text>
+            <Text style={styles.title}>{location.country}</Text>
             <Text style={styles.subtitle}>{date.toUTCString()}</Text>
             <Text style={styles.subtitle}>{weather.description}</Text>
             <Image style={styles.weatherIcon} source={{uri:weather.icon}}/>          
